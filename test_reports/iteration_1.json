@@ -1,0 +1,56 @@
+{
+  "summary": "Executed backend pytest regression (11 tests) and multi-pass UI/integration checks on public preview URL for mine/session/agent/rewards/guide/responsive workflows.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "AgentDialog name input",
+        "issue": "Native HTML pattern validation is broken in modern browser regex-v mode; invalid punctuation can bypass native check and only fails via backend response.",
+        "selector": "[data-testid='agent-name-input']",
+        "priority": "HIGH",
+        "resolved": true,
+        "resolution": "Escaped hyphen for HTML regex-v. Follow-up Playwright confirms !!! triggers patternMismatch and Finch-01_Test passes validity. Create/start/pause successful."
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_minepx_api.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Fix AgentDialog input pattern to a browser-safe regex (escape/move hyphen) so native validation works consistently.",
+    "Re-run focused UI validation for punctuation name blocking after regex fix."
+  ],
+  "critical_code_review_comments": [
+    "Console error confirms invalid HTML pattern: [A-Za-z0-9 _-]+ under /v mode; this undermines expected native validation UX.",
+    "yarn build shows react-hooks/exhaustive-deps warnings in minepx/api.ts and minepx/Dialogs.tsx; potential stale closure/effect behavior risks."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_minepx_api.py",
+    "/app/test_reports/iteration_1.json"
+  ],
+  "success_rate": {
+    "backend": "100%",
+    "frontend": "90%"
+  },
+  "seed_data_creation": "Created test sessions/agents via public API during automated tests.",
+  "retest_needed": false,
+  "main_agent_followup": {
+    "date": "2026-09-19",
+    "name_validation": "PASS: punctuation blocked, hyphen and underscore accepted, 24-character name handled",
+    "hook_warnings": "Moved response type outside callback and used stable agentId/agentStep effect dependencies",
+    "notification_overflow": "Fixed Sonner right-position toaster sizing after desktop-to-mobile resize; verified with active success toast",
+    "responsive": "PASS: zero right-edge overflow at 1920x800 and390x844; mine, agent, rewards, guide and active notifications checked",
+    "game": "PASS: create/start/pause/resume labels, full crew expansion and Atlas inspection, navigation/canvas remount, changing animation frames",
+    "build": "PASS: yarn build",
+    "test_data": "Deleted known testing-only agents/events by exact IDs; unrelated records preserved"
+  },
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Core flows verified on external preview URL. Start/pause/resume, persistence across reload/new-tab, rewards 409, guide and 404 checks passed. Canvas nonblank confirmed. Canvas sprite click-to-open dialog is non-deterministic due hitbox/position and may need manual click retries.",
+  "rca of the issue": "Reproduction: open Create Agent dialog, type invalid punctuation (e.g., !!!), submit. Browser console logs: Pattern attribute value [A-Za-z0-9 _-]+ is not a valid regular expression under /v. Native validity check becomes unreliable; backend 422 handles rejection. Mitigation: change pattern to a /v-safe class such as [A-Za-z0-9 _\\-]+ or place hyphen at class start/end safely and retest."
+}

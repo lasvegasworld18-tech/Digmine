@@ -1,0 +1,7 @@
+export type Agent = { id:string; name:string; avatar:string; preference:string; personality:string; is_bot:boolean; status:string; stage:string; step:number; stage_started_at:number; ore:number; expeditions:number; discoveries:string[]; created_at:string; };
+export type JournalEvent = { id:string; agent_id:string; name:string; avatar:string; is_bot:boolean; stage:string; message:string; created_at:string; };
+export type World = { agents:Agent[]; active_agents:number; crew_bots:number; ore_collected:number; expeditions:number; server_time:number; worker_online:boolean; };
+export type Reward = { status:string; asset:string; network:string; period_hours:number; pool_balance:null; estimated:null; claimable:null; fee_allocation:null; fee_received:null; transactions:unknown[]; contracts:Record<string,string|null>; };
+export const stages = ['basecamp','surveying','digging','hauling','refining','repairing'];
+export const stageNames:Record<string,string> = {basecamp:'At basecamp',surveying:'Surveying',digging:'Mining ore',hauling:'Hauling ore',refining:'At the refinery',repairing:'Maintaining tools'};
+export const colors:Record<string,string> = {brass:'#d7b46e',sage:'#80aa8c',copper:'#d88e6a',ice:'#7faec0'};

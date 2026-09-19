@@ -1,0 +1,151 @@
+{
+  "project_identity": {
+    "name": "MINEPX — Autonomous Pixel Mining",
+    "tagline": "Server-Persistent Pixel Expeditions & Robinhood Chain GLD Pool Shares",
+    "context": "Interactive Gaming Dashboard & Pixel Mining Visualizer",
+    "theme": "Dark Steampunk/Industrial (Charcoal, Antique Brass, Luminous Gold)",
+    "file_extension_notice": "JavaScript (.js and .jsx files) ecosystem used across frontend."
+  },
+  "design_principles": {
+    "fusion": "Combines retro 16-bit arcade pixel aesthetics with high-density industrial telemetry dashboards and Swiss precision typographic hierarchy.",
+    "emotion": "Tactile subterranean urgency, high-stakes exploration, raw metallic reward clarity without synthetic hype or fake APY counters.",
+    "content_storytelling": "Every pixel miner agent possesses an individual personality, status cycle, and rule-engine journal entry based on real server events.",
+    "anti_slop_rules": [
+      "NO generic light themes or saturated tech-purple gradients (#7351B7 strictly forbidden).",
+      "NO fake 'Demo Mode' badges or synthetic simulated APY counters.",
+      "NO complete transparent backgrounds on headers, overlays, or floating menus.",
+      "NO 'Inter everywhere' for headings — use heavy industrial display typography like Barlow Condensed/Exo 2 paired with JetBrains Mono.",
+      "NO universal CSS transitions (e.g., transition: all). Only target explicit transform/opacity/color properties."
+    ]
+  },
+  "typography": {
+    "heading_font": "Exo 2, Barlow Condensed, sans-serif",
+    "body_font": "DM Sans, system-ui, sans-serif",
+    "mono_font": "JetBrains Mono, IBM Plex Mono, monospace",
+    "scale": {
+      "h1_hero": "text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-wider",
+      "h2_section": "text-xl sm:text-2xl lg:text-3xl font-bold uppercase tracking-wide",
+      "h3_card": "text-lg sm:text-xl font-semibold tracking-normal",
+      "body_main": "text-sm sm:text-base leading-relaxed text-slate-300",
+      "journal_mono": "text-xs sm:text-sm font-mono tracking-tight text-amber-200/90 leading-tight",
+      "badge_label": "text-xs font-mono uppercase tracking-widest"
+    }
+  },
+  "color_palette": {
+    "background_dark": "#0D0E11",
+    "surface_charcoal": "#14161C",
+    "surface_charcoal_elevated": "#1C1E26",
+    "brass_primary": "#C5A059",
+    "brass_bright": "#E1B867",
+    "gold_accent": "#FFD700",
+    "gold_glow": "#F3C64F",
+    "copper_border": "#3A3125",
+    "iron_gray": "#2A2D37",
+    "slate_muted": "#8B92A5",
+    "emerald_active": "#10B981",
+    "amber_warning": "#F59E0B",
+    "crimson_alert": "#EF4444",
+    "status_states": {
+      "basecamp": "text-amber-400 bg-amber-950/40 border-amber-700/50",
+      "surveying": "text-cyan-400 bg-cyan-950/40 border-cyan-700/50",
+      "digging": "text-yellow-400 bg-yellow-950/40 border-yellow-700/50",
+      "hauling": "text-orange-400 bg-orange-950/40 border-orange-700/50",
+      "refining": "text-emerald-400 bg-emerald-950/40 border-emerald-700/50",
+      "repairing": "text-purple-400 bg-purple-950/40 border-purple-700/50"
+    }
+  },
+  "layout_and_navigation": {
+    "structure": "Fixed dark top header with glassmorphic blur, left/top tab bar for view switching, main viewport area with dynamic grid allocations.",
+    "routes": [
+      {
+        "id": "mine",
+        "path": "/",
+        "label": "Shared Pixel Mine",
+        "description": "Public animated pixel cave visualizer running continuous autonomous worker cycles with bot crew and live server feed."
+      },
+      {
+        "id": "agent",
+        "path": "/agent",
+        "label": "My Agent",
+        "description": "Single-agent persistent creation & telemetry control panel with state machine, equipment repair, and rule-engine journal."
+      },
+      {
+        "id": "rewards",
+        "path": "/rewards",
+        "label": "Mining Pool & GLD",
+        "description": "Robinhood Chain GLD pool metrics, 24h cycle tracker, balance-time weight breakdown, and unverified contract fallback states."
+      },
+      {
+        "id": "guide",
+        "path": "/guide",
+        "label": "Field Guide",
+        "description": "Mine lore, ore catalog, exploration achievements, cosmetics unlocked by discovery, and autonomous agent rules."
+      }
+    ],
+    "header_rules": "Must include MINEPX logo, Robinhood Chain badge, GLD Pool summary, Wallet connect modal trigger, and active tab selector. Background must use bg-[#14161C]/90 backdrop-blur-md border-b border-[#3A3125]."
+  },
+  "pixijs_mine_visualizer_guidelines": {
+    "container": "Aspect-ratio preserved responsive canvas canvas wrapped in charcoal-finished border frame.",
+    "sprite_elements": [
+      "Basecamp & Tool Rack: Resting zone for miners undergoing repairs.",
+      "Surveying Nodes: Crystal seams & scanner beacons.",
+      "Mining Shafts: Active pickaxe animations & glowing ore veins.",
+      "Ore Carts & Rails: Hauling pathways to central refinery.",
+      "Refinery Furnace: Ember particle generator & gold ingot output queue."
+    ],
+    "bot_crew_agents": [
+      {"name": "Buster-7", "trait": "Methodical", "color": "#C5A059"},
+      {"name": "Grip-Nuts", "trait": "Aggressive", "color": "#FFD700"},
+      {"name": "Rust-Bucket", "trait": "Risk-Taker", "color": "#F59E0B"},
+      {"name": "Sparky-V", "trait": "Deep-Scout", "color": "#10B981"}
+    ],
+    "rendering_behavior": "Smooth 60 FPS update loop with pixel-snapping (PIXI.settings.ROUND_PIXELS = true). Crisp retro scale without blurry smoothing."
+  },
+  "data_state_rules": {
+    "finance_unverified": "Display 'Not available' when wallet or smart contract pool metrics are unverified. NEVER show fake numbers, placeholder zero balances, or fake APY percentages.",
+    "persistent_execution": "Agents keep mining on backend worker process even when browser is closed or wallet disconnects.",
+    "crew_identification": "Crew bot agents must be explicitly badge-labeled as '[CREW BOT]' to prevent confusing them with wallet-owned agents."
+  },
+  "component_path_mapping": {
+    "header": "/app/frontend/src/components/Header.js",
+    "shared_mine": "/app/frontend/src/components/MineVisualizer.js",
+    "agent_panel": "/app/frontend/src/components/AgentControl.js",
+    "rewards_panel": "/app/frontend/src/components/RewardsPool.js",
+    "field_guide": "/app/frontend/src/components/FieldGuide.js",
+    "journal_feed": "/app/frontend/src/components/AgentJournalFeed.js"
+  },
+  "media_assets": {
+    "gold_nugget_close_up": "https://images.unsplash.com/photo-1705073703601-eed67020c5ee?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MTJ8MHwxfHNlYXJjaHwzfHxnb2xkJTIwbnVnZ2V0cyUyMG9yZSUyMG1ldGFsJTIwdGV4dHVyZXxlbnwwfHx8fDE3ODk4MjEyMzh8MA&ixlib=rb-4.1.0&q=85",
+    "gold_mineral_macro": "https://images.pexels.com/photos/35497189/pexels-photo-35497189.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "molten_gold_texture": "https://images.unsplash.com/photo-1594896733292-9a77b5809c63?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MTJ8MHwxfHNlYXJjaHwxfHxnb2xkJTIwbnVnZ2V0cyUyMG9yZSUyMG1ldGFsJTIwdGV4dHVyZXxlbnwwfHx8fDE3ODk4MjEyMzh8MA&ixlib=rb-4.1.0&q=85",
+    "pyrite_crystals": "https://images.pexels.com/photos/12275694/pexels-photo-12275694.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "mine_shaft_scaffolding": "https://images.pexels.com/photos/20637296/pexels-photo-20637296.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+  },
+  "accessibility_and_testing": {
+    "contrast_ratio": "APCA high-contrast compliance for dark charcoal background with gold/brass text.",
+    "testing_attribute_requirement": "All interactive buttons, links, inputs, tabs, modal triggers, and status panels MUST include data-testid in kebab-case format.",
+    "sample_test_ids": [
+      "data-testid=\"nav-mine-tab\"",
+      "data-testid=\"nav-agent-tab\"",
+      "data-testid=\"nav-rewards-tab\"",
+      "data-testid=\"nav-guide-tab\"",
+      "data-testid=\"connect-wallet-button\"",
+      "data-testid=\"create-agent-button\"",
+      "data-testid=\"agent-name-input\"",
+      "data-testid=\"agent-avatar-select\"",
+      "data-testid=\"exploration-trait-option\"",
+      "data-testid=\"start-mining-button\"",
+      "data-testid=\"pause-mining-button\"",
+      "data-testid=\"claim-gld-button\"",
+      "data-testid=\"journal-log-item\"",
+      "data-testid=\"mining-pool-stats-card\""
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Ensure all user-facing strings are exclusively in English.",
+    "Do not put any 'demo' or 'placeholder' watermarks in UI text.",
+    "Ensure PixiJS visualizer canvas is initialized smoothly without throwing missing canvas context errors.",
+    "Provide clear feedback for unverified contracts ('Not available') without breaking UI structure.",
+    "Add data-testid attributes to all interactive elements."
+  ]
+}

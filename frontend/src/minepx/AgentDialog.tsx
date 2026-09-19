@@ -1,0 +1,18 @@
+import {useState} from 'react';
+import {Pickaxe,Check,Compass,Mountain,Shield,ArrowRight,LoaderCircle} from 'lucide-react';
+import {Dialog,DialogContent,DialogTitle,DialogDescription} from '../components/ui/dialog';
+import {Button} from '../components/ui/button';
+import {Avatar} from './Avatar';
+import {ensureSession,request} from './api';
+import {Agent} from './types';
+import {toast} from 'sonner';
+export const AgentDialog=({open,onClose,onCreated}:{open:boolean;onClose:()=>void;onCreated:(a:Agent)=>void})=>{
+ const [name,setName]=useState(''),[avatar,setAvatar]=useState('brass'),[preference,setPreference]=useState('balanced'),[busy,setBusy]=useState(false),[error,setError]=useState('');
+ const submit=async(e:React.FormEvent)=>{e.preventDefault();setError('');setBusy(true);try{await ensureSession();const a=await request<Agent>('/agent',{method:'POST',body:JSON.stringify({name:name.trim(),avatar,preference})});onCreated(a);onClose();toast.success(`${a.name} has arrived at basecamp.`);}catch(e){setError((e as Error).message);}finally{setBusy(false);}};
+ return <Dialog open={open} onOpenChange={v=>{if(!v&&!busy)onClose();}}><DialogContent className="mine-dialog" data-testid="create-agent-dialog"><div className="dialog-emblem"><Pickaxe size={24}/></div><DialogTitle data-testid="create-agent-title">Meet your miner.</DialogTitle><DialogDescription data-testid="create-agent-description">Every expedition starts with a little character.</DialogDescription>
+ <form onSubmit={submit}><label className="field-label" htmlFor="agent-name" data-testid="agent-name-label">AGENT NAME <span>{name.length}/24</span></label><input data-testid="agent-name-input" id="agent-name" autoComplete="off" placeholder="A name for the underground" title="Use 2–24 letters, numbers, spaces, hyphens, or underscores." value={name} minLength={2} maxLength={24} pattern={'[A-Za-z0-9 _\\-]+'} required onChange={e=>setName(e.target.value)} />
+ <div className="field-label" data-testid="avatar-label">CHOOSE YOUR MINER</div><div className="avatar-options">{['brass','sage','copper','ice'].map(a=><button type="button" className={avatar===a?'selected':''} key={a} data-testid={`avatar-option-${a}`} onClick={()=>setAvatar(a)} aria-pressed={avatar===a}><Avatar avatar={a} size={65}/><span>{a}</span>{avatar===a&&<Check size={12}/>}</button>)}</div>
+ <div className="field-label" data-testid="preference-label">EXPLORATION STYLE</div><div className="preference-options">{[{id:'balanced',label:'Wayfinder',description:'A little of everything.',icon:Compass},{id:'deep',label:'Deep explorer',description:'Follow the unknown.',icon:Mountain},{id:'careful',label:'Steady hand',description:'One careful step at a time.',icon:Shield}].map(p=><button type="button" key={p.id} data-testid={`preference-${p.id}`} onClick={()=>setPreference(p.id)} className={preference===p.id?'selected':''} aria-pressed={preference===p.id}><p.icon size={18}/><span><b>{p.label}</b><small>{p.description}</small></span><i>{preference===p.id&&<Check size={12}/>}</i></button>)}</div>
+ <p className="access-note" data-testid="agent-access-note">Your agent access is saved in this browser. Wallet linking opens after contract verification. Exploration style does not affect GLD rewards.</p>
+ {error&&<p role="alert" className="form-error" data-testid="create-agent-error">{error}</p>}<Button className="gold-button full-width" data-testid="create-agent-submit" type="submit" disabled={busy||name.trim().length<2}>{busy?<LoaderCircle className="spin"/>:<Pickaxe size={16}/>} {busy?'Preparing your miner…':'Create agent'}{!busy&&<ArrowRight size={16}/>}</Button></form></DialogContent></Dialog>;
+};
