@@ -3,6 +3,7 @@ import asyncio
 import logging
 import time
 from datetime import datetime, timezone
+from game_worker import game_defaults, migrate, advance_game
 
 STAGES = ['basecamp', 'surveying', 'digging', 'hauling', 'refining', 'repairing']
 STEP_SECONDS = 18
@@ -37,7 +38,7 @@ def make_agent(agent_id, name, avatar, preference, personality, is_bot=False, of
                 personality=personality, is_bot=is_bot, status='active' if is_bot else 'ready',
                 stage='basecamp', step=0, stage_started_at=now - offset,
                 started_at=now - offset, elapsed_before=0.0, ore=0, expeditions=0,
-                discoveries=[], created_at=iso(now), revision=0)
+                discoveries=[], created_at=iso(now), revision=0, **game_defaults(preference))
 
 async def seed(db):
     await db.agents.create_index('id', unique=True)
@@ -50,8 +51,11 @@ async def seed(db):
         agent = make_agent(f'crew-{i + 1:02}', name, avatar, preference, personality, True, i * 9)
         await db.agents.update_one({'id': agent['id']}, {'$setOnInsert': agent}, upsert=True)
         await db.agents.update_one({'id': agent['id'], 'is_bot': True}, {'$set': {'preference': preference}})
+    await migrate(db)
 
 async def advance(db, agent):
+    if not agent['is_bot']:
+        return await advance_game(db, agent)
     now = time.time()
     elapsed = agent['elapsed_before'] + now - agent['started_at']
     target = int(elapsed // STEP_SECONDS)
@@ -79,7 +83,7 @@ async def advance(db, agent):
 async def worker(db, state):
     while True:
         try:
-            async for agent in db.agents.find({'status': 'active'}, {'_id': 0}):
+            async for agent in db.agents.find({'$or': [{'status': 'active'}, {'contest.status': 'active'}]}, {'_id': 0}):
                 await advance(db, agent)
             state.last_tick = time.time()
         except asyncio.CancelledError:

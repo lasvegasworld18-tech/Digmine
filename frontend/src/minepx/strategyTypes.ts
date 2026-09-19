@@ -1,0 +1,13 @@
+export type Metric='energy'|'tool'|'cargo'|'depth'|'quality'|'hazard';
+export type Condition={field:Metric;operator:'lt'|'lte'|'gt'|'gte'|'eq'|'neq';value:number};
+export type Group={match:'all'|'any';conditions:Condition[]};
+export type Rule={id:string;name:string;enabled:boolean;match:'all'|'any';groups:Group[];action:string};
+export type Strategy={name:string;target_depth:number;risk:number;haul_threshold:number;energy_reserve:number;repair_threshold:number;ore_priority:'balanced'|'volume'|'rich';rules:Rule[]};
+export type StrategyResponse={strategy:Strategy;version:number;updated_at:string;history:{version:number;name:string;saved_at:string}[]};
+export type Preset={id:string;label:string;description:string;strategy:Strategy};
+export type Evaluation={decisions:number;score:number;delivered:number;incidents:number;energy:number;tool:number;banked_points:number;exploration_points:number;penalties:number;trace:{decision:number;action:string;reason:string;energy:number;tool:number;cargo:number;message:string}[]};
+export type Season={id:string;name:string;starts_at:string;ends_at:string;action_budget:number;prize_status:string;rules_version:string};
+export type LeaderRow={rank:number;agent_id:string;name:string;avatar:string;strategy_name:string;score:number;delivered:number;actions_used:number;incidents:number;status:string;entered_at:string};
+export type LeaderboardData={season:Season;entries:LeaderRow[];total:number};
+export const metricNames:Record<Metric,string>={energy:'Energy',tool:'Tool integrity',cargo:'Cart load',depth:'Depth',quality:'Vein quality',hazard:'Hazard level'};
+export const actionNames:Record<string,string>={mine:'Mine the vein',survey:'Survey a new seam',deeper:'Descend one level',shallower:'Ascend one level',return:'Return with ore',rest:'Recover energy',repair:'Service tools',refine:'Refine the haul'};

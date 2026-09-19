@@ -15,6 +15,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import DuplicateKeyError
 from models import AgentCreate, AgentOut, EventOut, WorldOut, SessionOut, MeOut, ActionIn
 from engine import seed, worker, make_agent, advance, iso
+from game_worker import game_defaults
+from strategy_routes import make_strategy_router
 
 load_dotenv(Path(__file__).parent / '.env')
 client = AsyncIOMotorClient(os.environ['MONGO_URL'])
@@ -76,6 +78,7 @@ async def create_agent(data: AgentCreate, authorization: Optional[str] = Header(
     uid = await owner(authorization)
     personality = {'balanced': 'Curious', 'deep': 'Adventurous', 'careful': 'Methodical'}[data.preference]
     agent = make_agent(str(uuid.uuid4()), data.name, data.avatar, data.preference, personality)
+    agent.update(game_defaults(data.preference, data.strategy_preset))
     agent['owner'] = uid
     try:
         await db.agents.insert_one(agent.copy())
@@ -118,13 +121,15 @@ async def journal(agent_id: Optional[str] = None, limit: int = Query(30, ge=1, l
 
 @api.get('/rewards')
 async def rewards():
-    return {'status': 'awaiting_verification', 'asset': 'GLD', 'network': 'Robinhood Chain',
-            'period_hours': 24, 'pool_balance': None, 'estimated': None, 'claimable': None,
+    return {'status': 'awaiting_verification', 'asset': 'GLD', 'network': 'Solana', 'platform': 'Stonk.fun',
+            'distribution_basis': 'pro_rata_holdings', 'agent_required': False, 'contest_affects_holder_share': False,
+            'period_hours': None, 'finances': None, 'pool_balance': None, 'estimated': None, 'claimable': None,
             'fee_allocation': None, 'fee_received': None, 'transactions': [],
             'contracts': {'MINEPX': None, 'GLD': None, 'vault': None}}
 
 @api.post('/rewards/claim')
 async def claim():
-    raise HTTPException(409, 'GLD claims are not available. Token and reward contracts must be verified first.')
+    raise HTTPException(409, 'GLD claims are not available. Official Solana mint, Stonk.fun support, and settlement rules must be verified first.')
 
 app.include_router(api)
+app.include_router(make_strategy_router(db, owner))

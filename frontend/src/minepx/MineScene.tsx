@@ -1,7 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {Application,Assets,Container,Graphics,Sprite,Text,Texture,Rectangle} from 'pixi.js';
 import {Maximize,Minimize,Minus,Plus,LocateFixed,Eye,EyeOff,Pause,Play,Mountain} from 'lucide-react';
-import {Agent,World} from './types';
+import {Agent,World,stages} from './types';
 import {minerTexture} from './sprites';
 const W=1264,H=700;
 const nodes=[[215,523],[343,323],[595,246],[790,385],[1048,492],[616,587]];
@@ -55,7 +55,7 @@ export const MineScene=({world,onSelect}:{world:World|null;onSelect:(a:Agent)=>v
        const label=new Text({text:agent.name,style:{fontFamily:'JetBrains Mono, monospace',fontSize:12,fill:agent.is_bot?0xe0dfd3:0xf7cf7b,stroke:{color:0x151819,width:4},fontWeight:'500'}});label.anchor.set(.5,1);label.position.set(0,-37);root.addChild(label);
        actors.addChild(root);item={root,body,tool,cart,spark,label,ring,textures:tex,lastX:0};sprites.set(agent.id,item);
       }
-      const stage=agent.status==='ready'?0:agent.step%6,prev=(stage+5)%6;
+      const stage=agent.status==='ready'?0:Math.max(0,stages.indexOf(agent.stage)),prev=agent.is_bot?(stage+5)%6:Math.max(0,stages.indexOf(agent.previous_stage));
       const progress=agent.status==='active'?Math.max(0,Math.min(1,(now-agent.stage_started_at)/18)):1;
       const walk=agent.status==='active'&&progress<.43;
       const offsetX=((index*37)%91)-45,offsetY=((index*17)%35)-17;

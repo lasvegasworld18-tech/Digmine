@@ -1,5 +1,17 @@
 # Integration verification log — 2026-09-19
 
+## CURRENT: Solana / Stonk.fun amendment (supersedes Pons below)
+
+- User switched network to **Solana** and launch/reward platform to **Stonk.fun**, retaining GLD only if the appropriate official Solana asset exists. Holders receive pro-rata holding-based allocations from fees. Agent contest prizes are a separate project/sponsor budget, not currently funded/configured.
+- `https://stonk.fun` failed crawler DNS resolution on this check. The current ANTMINER page links its token Buy flow to **https://www.stonkfun.xyz/**. That domain was fetched successfully and is the external reference used in the app.
+- StonkFun page headline: “Launch coins paired with anything”. Visible pairing categories include xStocks and Solana; token listings explicitly label “Rewards — trading fees on this token are distributed to holders”. This supports the broad platform fee-sharing concept, not the full MINEPX configuration.
+- A visible listing (`RuneScape Gold / GP`) was paired with **GLDX / xStocks**. The listing's quote-asset URL referenced `Xsv9hRk1z5ystj9MhnA7Lq4vjSsLwzL2nxrwmwtD3re`. This is recorded as a **research lead only**, not a configured/approved MINEPX reward mint or an assertion of equivalence to GLD.
+- Web search also identified a third-party GLDx product page: https://stocktokenhub.com/docs/products/xstocks/gldx/. It describes a tracker certificate linked to SPDR Gold Shares. Primary issuer verification and jurisdiction/transfer/distribution checks remain outstanding. No Robinhood GLD support on Solana was established.
+- ANTMINER still describes its own3%transfer tax, approximate2.5%cost deduction, $20eligibility threshold, WBTC payouts, and burns. Those settings are not adopted or presented as MINEPX rules. Stonk-specific fee rates, eligible balances, minimums, rounding, claim versus automatic distribution and settlement timing require authoritative verification.
+- Current app shows GLD requested / verification pending, financial values unavailable, claims blocked. No silent GLDx/WBTC/SOL substitution. Mining strategies and leaderboard scores never modify holder allocation.
+
+The sections below record the original research history; Pons and Robinhood are no longer current integration targets.
+
 ## Pons — https://ponsfamily.com
 Fetched using crawler during implementation. Page title **Explore · pons**; metadata describes fixed-supply tokens launched on Robinhood Chain. Listings include graduated and V2 tokens.
 

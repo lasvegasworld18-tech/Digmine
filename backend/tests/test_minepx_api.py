@@ -89,7 +89,10 @@ class TestPublicEndpoints:
         assert rewards.status_code == 200
         rewards_data = rewards.json()
         assert rewards_data["status"] == "awaiting_verification"
-        assert rewards_data["period_hours"] == 24
+        assert rewards_data["network"] == "Solana"
+        assert rewards_data["platform"] == "Stonk.fun"
+        assert rewards_data["distribution_basis"] == "pro_rata_holdings"
+        assert rewards_data["period_hours"] is None
         assert rewards_data["pool_balance"] is None
         assert rewards_data["fee_allocation"] is None
 
@@ -254,11 +257,13 @@ class TestAgentProgressionAndPersistence:
         me = api_client.get(f"{api_base_url}/agent", headers=auth_headers(token), timeout=20)
         assert me.status_code == 200
         me_agent = me.json()["agent"]
-        assert me_agent["expeditions"] >= 1
-        assert "pyrite" in me_agent["discoveries"]
+        assert me_agent["step"] >= 5
+        assert me_agent["ore"] >= 1
+        assert me_agent["game"]["decision"] >= 5
 
         events = api_client.get(f"{api_base_url}/journal?agent_id={agent_id}&limit=100", timeout=20)
         assert events.status_code == 200
         event_list = events.json()
+        assert len(event_list) >= 1
         ids = [item["id"] for item in event_list]
         assert len(ids) == len(set(ids))

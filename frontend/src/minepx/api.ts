@@ -7,7 +7,10 @@ export async function request<T>(path:string, options:RequestInit={}):Promise<T>
  const token=localStorage.getItem('minepx-access');
  const response=await fetch(API+path,{...options,headers:{'Content-Type':'application/json',...(token?{Authorization:`Bearer ${token}`} : {}),...options.headers}});
  const data=await response.json();
- if(!response.ok) throw new Error(typeof data.detail==='string'?data.detail:'Please check your details and try again.');
+ if(!response.ok) {
+  const detail=typeof data.detail==='string'?data.detail:Array.isArray(data.detail)?data.detail.map((d:{loc?:string[];msg?:string})=>`${d.loc?.slice(1).join(' → ')||'Details'}: ${(d.msg||'Invalid value').replace('Value error, ','')}`).slice(0,3).join(' · '):'Please check your details and try again.';
+  throw new Error(detail);
+ }
  return data;
 }
 export async function ensureSession() {

@@ -1,5 +1,67 @@
 # MINEPX — Product Requirements & Handoff
 
+## CURRENT SPECIFICATION — amendment implemented 2026-09-19
+
+**This amendment supersedes the original Robinhood/Pons, balance-time weighting, activation eligibility, Solidity/wagmi plans and fixed-cycle human-agent logic below. Original requirements remain as historical context only where superseded. Preserve the existing visual identity, original mine assets, saved agents and lifetime progress.**
+
+### Latest user request (verbatim)
+“Broo ada perubahan pertama kita kembali ke solana jangan robinhood lagi , kedua launch dan fee rewardnya di stonk.fun bukan di ponsfamily lagi, ketiga konsep yg gue buat itu adalah konsep seperti si web antminer tapi ada animasinya pake sistem agent si kodama github, rewards tetap pro rata sesuai holding dari via trading fee, agentnya tampilan mining itu tetap cuma dijadikan pemanis sama buat ada leaderboard untuk contest agent, tambahin beberapa strategi di agent jadi kalau org create agent bisa nambahin strategi atau edit strategi agentnya untuk kontest leaderboard agent mininhgtersebut, jadi tiap agent / tiap akun itu beda beda untuk mining dan scorenya gitu loh sesuai strategi si pegguna untuk agent (kalau bisa buat rumit konsep strategi ini), leaderboard contest itu akan mendapat reward, paham gak maksud gue?”
+
+Confirmed choices:
+- “Tetap GLD: hanya jika tersedia aset resmi yang sesuai di Solana.”
+- Separate project/sponsor-funded contest pool, not deducted from holder allocations. Build contest/leaderboard first; prize asset, amounts and actual funding are decided later.
+- “Preset + editor aturan IF/THEN bertingkat”: priorities, combined conditions, energy, risk, cart load, maintenance; editable without code.
+- “Tetap pertahankan yang ada hanya mengubah yang perlu diubah agar sesuai konsep dan untuk tamabahannya juga”.
+
+### Two independent systems
+1. **Holder rewards:** Solana + Stonk.fun. Planned share = available holder pool × eligible MINEPX holding / total eligible holdings, subject to verified Stonk distribution mechanics. No game requirement, activation gate, time-held multiplier, per-wallet bonus, or contest-based advantage. No minimum holding is planned by MINEPX, but platform eligibility/rounding must still be verified. No unverified 24-hour settlement promise.
+2. **Agent contest:** strategy-driven mining and a leaderboard. A separate project/sponsor prize pool is planned, but no amount, reward asset, payout, or funding is currently configured. No holder pool deductions. Crew bots never enter. Browser profiles are not verified wallets; funded prize eligibility remains gated.
+
+**GLD is unverified on Solana.** Stonk listings of **GLDx** are not evidence that the user's previously requested GLD is the same asset. Do not silently substitute GLDx, WBTC, or SOL, and do not configure an unverified mint.
+
+### Implemented amendment
+- Solana/Stonk naming, reward metadata, wallet-readiness dialog, holder formula and Field Guide updated. Original mine/home/crew/art/layout retained. User agent Heti and its accumulated progress preserved; testing-only records cleaned by known IDs.
+- Four starting strategy presets: **Wayfinder, Deep Prospector, Steady Hand, Freight Runner**. Creation chooses a preset; advanced editing at `/strategy`, reachable from My Agent.
+- Persistent private versioned strategy: target depth1–5, risk0–100, haul threshold20–100, energy reserve10–70, tool repair threshold10–80, and balanced/volume/high-value ore preference.
+- Up to8 ordered enabled/disabled rules, up to3 groups per rule and4 numeric conditions per group. ALL/ANY both across groups and within each group. Six comparisons over energy, tool integrity, cart%, depth, vein quality and hazard. Seven user-selectable actions; refining follows a return commitment automatically.
+- Strict bounded server validation; duplicate rule IDs and unknown/injected fields rejected. First-match semantics. Mandatory safety for low energy/tools, full cargo and delivery commitment. No arbitrary user code execution.
+- Save/discard, reorder/add/delete groups/conditions/rules, version conflict detection, recent version history, tab-local unsaved draft recovery. Edits affect future decisions and preserve live resources, used contest actions and earned score.
+- Workbench evaluates60/120/300 decisions in a fixed environment with the same core engine used by live play. Shows score, delivered ore, incidents and decision traces. Does not mutate live agent or leaderboard.
+- Strategic live state: energy, tool integrity, cargo/value, depth, quality, hazards, mining/setbacks, returns/refining, recovery/maintenance. Server decisions every18seconds; chosen actions control actual Pixi stage/previous-stage animation and journal reasons. Resident bots retain their familiar ambient cycle.
+- Deterministic server clock catches up after browser closure and server restart, up to4000 decisions per pass; optimistic revision update and durable pending-event outbox with unique IDs. Strategy save waits for old decisions to be caught up before applying new rules.
+- Public `/leaderboard`: **Brass Hollow Open**, weekly Monday00:00UTC seasons (reasonable initial default), countdown, actual entrants, search, miner detail, rank, score, action usage, rule disclosure and prize status.
+- One entry per agent per season, starting100energy/100tools/empty cart/depth1. Budget600 decisions. Joining starts the miner and resets only working resources, not lifetime ore/expeditions/collections. Pause consumes no decisions but does not extend the deadline.
+- Score = banked delivered ore value + first-time depth milestones (10 per deeper level, maximum40) − setback penalties (25each), floored at0. Cargo not delivered scores0. No repeated depth farming or empty-delivery farming.
+- Score freezes at600decisions or season end; ordinary mining may continue. Previous season entries archived on re-entry. Tie order: score descending, delivered ore descending, actions ascending, entry time ascending, stable agent ID.
+- Rankings exclude bots and expose no full private strategy. Top100 displayed; broader pagination and exact out-of-top100 personal rank are future scaling work.
+- API rewards explicitly exposes `finances: null`, null financial balances and no fabricated transactions. Claim staysHTTP409. No new external integration or real wallet signature flow was added.
+
+### Amendment architecture / files
+- `backend/strategy_models.py`: strict strategy inputs, public game/contest response models.
+- `backend/strategies.py`: pure deterministic rule engine, presets and evaluation.
+- `backend/game_worker.py`: human-agent migration, catch-up, safety, immutable contest cap/deadline and event outbox.
+- `backend/contest_logic.py`: seasons, ranking, archived results.
+- `backend/strategy_routes.py`: authenticated strategy read/save/evaluate and contest entry; public presets/leaderboard.
+- Existing `server.py`, `engine.py`, `models.py` extended without resetting lifetime state.
+- Frontend additions: StrategyPage, RuleBuilder, StrategyEvaluation, ContestPage, AgentTelemetry, strategyTypes and scoped Strategy.css. Existing components updated only for new flows/chain/reward boundaries.
+- New collections `strategy_history` (unique version ID), `contest_archive` (unique agent-season ID), indexes on season. Mongo `_id` excluded and public responses typed.
+
+### Verification — amendment
+- Iteration2: **28/28 backend tests**, UI flows and six routes at1920×800 and390×844. Follow-up finance metadata key fixed.
+- Iteration3: **8/8 targeted engine edge tests** in isolated temporary Mongo databases: 600cap/freeze, repeat-tick idempotence, post-cap ordinary mining, strategy-edit retention, expired paused/active entries, archive/new season, nested-rule semantics, safety/anti-farming and rank ties. Temporary databases removed.
+- Main-agent follow-up: guardian evaluation120decisions=1709; freight evaluation120decisions=1742 under same workbench seed, demonstrating genuine outcomes differ. Nested rule edit savedv2, contest entry and long24-character miner-name dialogs verified; no horizontal overflow in final desktop/mobile screenshots.
+- References: `test_reports/iteration_2.json`, `test_reports/iteration_3.json`, `backend/tests/test_minepx_strategy_contest.py`, `backend/tests/test_strategy_contest_engine_edges.py`, and `frontend/build-strategy.log`.
+- Screenshots: `/app/strategy-desktop-final.jpg`, `/app/strategy-mobile-final.jpg`, `/app/contest-desktop-final.jpg`, `/app/contest-mobile-final.jpg`, `/app/contest-long-name-dialog-mobile.jpg`, `/app/rewards-split-mobile-final.jpg`.
+
+### Current prioritized next steps (replace older backlog below)
+**P0 before real rewards:** verify official GLD mint/issuer terms on Solana (or obtain user approval for a distinct alternative); verify Stonk fee settings, denominations, eligibility/minimums, schedule, settlement and jurisdiction; implement real Solana wallet ownership and one-wallet-one-agent binding; decide separate contest prizes/funding/eligibility; add anti-sybil enforcement, immutable season-rule/strategy audit and independent review before funded contests; wire actual holder-fee records and only then verified claims/auto-distribution as platform mechanics require. No EVM/Solidity/wagmi assumption remains.
+
+**P1:** isolated worker leader/scaling controls, replay/reconciliation monitoring and retention; complete historical strategy snapshots/season rule versioning for prize adjudication; pagination and own rank beyond top100; replay/history UI; authenticated access recovery; evaluate rate limits and high-concurrency stress tests.
+
+**P2:** community expeditions, new biomes, cosmetic-only rewards, shareable strategy/result cards, further resource trade-offs and league formats. No paid power or mining multiplier for holder rewards.
+
+---
+
 ## Original problem statement
 
 MINEPX — Autonomous Pixel Mining

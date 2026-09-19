@@ -1,10 +1,13 @@
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 from typing import Literal, Optional
+from strategy_models import GameState, ContestProgress
 
 class AgentCreate(BaseModel):
+    model_config = ConfigDict(extra='forbid')
     name: str = Field(min_length=2, max_length=24, pattern=r'^[A-Za-z0-9 _-]+$')
     avatar: Literal['brass', 'sage', 'copper', 'ice'] = 'brass'
     preference: Literal['balanced', 'deep', 'careful'] = 'balanced'
+    strategy_preset: Literal['balanced', 'prospector', 'guardian', 'hauler'] = 'balanced'
 
     @field_validator('name')
     @classmethod
@@ -29,6 +32,11 @@ class AgentOut(BaseModel):
     expeditions: int
     discoveries: list[str]
     created_at: str
+    previous_stage: str = 'basecamp'
+    strategy_name: str = 'Wayfinder'
+    strategy_version: int = 1
+    game: GameState = Field(default_factory=GameState)
+    contest: Optional[ContestProgress] = None
 
 class EventOut(BaseModel):
     id: str
@@ -56,4 +64,5 @@ class MeOut(BaseModel):
     agent: Optional[AgentOut]
 
 class ActionIn(BaseModel):
+    model_config = ConfigDict(extra='forbid')
     action: Literal['start', 'pause', 'resume']
